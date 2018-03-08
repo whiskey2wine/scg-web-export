@@ -1,0 +1,9 @@
+body {
+  font-family: "Roboto", sans-serif !important;
+  background: #f1f4f5;
+}
+
+.chart {
+  /* width: 80vw; */
+  margin: 50px auto;
+}
