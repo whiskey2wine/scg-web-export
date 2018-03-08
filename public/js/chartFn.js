@@ -1,6 +1,5 @@
 import Chart from 'chart.js';
 
-console.log('bacon');
 export default (id, data) => {
   // console.log(Chart.defaults);
   // console.log(data);

@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import 'materialize-css';
 
 import createChart from './chartFn';
+import './updateTable';
 
 $(document).ready(() => {
   $('select').material_select();
