@@ -14,15 +14,20 @@ $('#tableUpdate').tabulator({
   columnVertAlign: 'middle',
   columns: [
     // Define Table Columns
-    { title: 'PINo', field: 'PINo' },
-    { title: 'Shipping', field: 'shipping', align: 'right' },
+    { title: 'PINo', field: 'PINo', align: 'center' },
+    { title: 'Shipping', field: 'shipping', align: 'center' },
     {
       title: 'จำนวนตู้',
-      columns: [{ title: 'เต็ม' }, { title: 'บวก' }, { title: 'รวม' }],
+      columns: [
+        { title: 'เต็ม', align: 'right' },
+        { title: 'บวก', align: 'right' },
+        { title: 'รวม', align: 'right' },
+      ],
     },
     {
       title: 'จองคิว (Booked)',
       field: 'booked',
+      align: 'right',
       editor: 'number',
       editorParams: { min: 0 },
     },
@@ -32,28 +37,37 @@ $('#tableUpdate').tabulator({
         {
           title: 'No Action',
           field: 'noaction',
+          align: 'right',
           editor: 'number',
           editorParams: { min: 0 },
         },
         {
           title: 'Loading',
           field: 'loading',
+          align: 'right',
           editor: 'number',
           editorParams: { min: 0 },
         },
         {
           title: 'Completed',
           field: 'completed',
+          align: 'right',
           editor: 'number',
           editorParams: { min: 0 },
         },
         {
           title: '% completed',
           field: 'percent',
+          align: 'center',
         },
       ],
     },
-    { title: 'สถานะตู้<br/> Remarks อื่นๆ', field: 'comment', editor: 'textarea' },
+    {
+      title: 'สถานะตู้<br/> Remarks อื่นๆ',
+      field: 'comment',
+      align: 'left',
+      editor: 'textarea',
+    },
   ],
 });
 

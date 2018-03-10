@@ -17,7 +17,7 @@ module.exports = {
       },
     ],
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'inline-source-map',
   plugins: [
     new webpack.ProvidePlugin({
       $: 'jquery',

@@ -166,7 +166,7 @@ const $pmListElement = $('#pm');
 //     console.log(err);
 //   });
 
-// // Insert PI when PM option has been selected
+// Insert PI when PM option has been selected
 $pmListElement.on('change', (e) => {
   let piOption;
   $('textarea.editor').val('');
