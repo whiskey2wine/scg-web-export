@@ -34,6 +34,22 @@ app.get('/getdata', (req, res) => {
     });
 });
 
+app.get('/getdata/:pm', (req, res) => {
+  // res.send(req.params);
+  query.q(`
+    select * from [Export_Transaction]
+    where location = '${req.params.pm}'
+  `);
+  query
+    .data()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+});
+
 server.listen(port, (err) => {
   if (err) {
     console.log('error', err);

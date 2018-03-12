@@ -7,3 +7,7 @@ body {
   /* width: 80vw; */
   margin: 50px auto;
 }
+
+.tabulator-col-title {
+  font-family: "Roboto", sans-serif !important;
+}

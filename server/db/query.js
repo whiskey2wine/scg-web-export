@@ -18,9 +18,14 @@ const config = {
 //     where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
 //     `;
 
-const query = `
+let query = `
   select * from [Export_Transaction];
-  `;
+`;
+
+// let query;
+const q = (Query) => {
+  query = Query;
+};
 
 const data = async () => {
   try {
@@ -42,4 +47,4 @@ sql.on('error', (err) => {
   console.log(JSON.stringify(err, undefined, 2));
 });
 
-module.exports.data = data;
+module.exports = { data, q };

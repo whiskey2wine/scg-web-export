@@ -2,35 +2,60 @@ import 'jquery-ui';
 import 'jquery.tabulator';
 
 // $('body').html('test');
-const data = require('../db.json');
+// const data = require('../db.json');
 
-console.log(data);
+// console.log(data);
 
 // load sample data into the table
 const createTable = (doc) => {
   $('#tableUpdate').tabulator({
+    placeholder: 'No Data Available',
     movableRows: true,
     movableColumns: true,
     height: '100%', // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
     layout: 'fitData', // fit columns to width of table (optional)
     columnVertAlign: 'middle',
     columns: [
+      {
+        rowHandle: true,
+        width: 20,
+        minWidth: 20,
+        // frozen: true,
+        headerSort: false,
+      },
       // Define Table Columns
       { title: 'PINo', field: 'PINo', align: 'center' },
       { title: 'Shipping', field: 'shipping', align: 'center' },
       {
         title: 'จำนวนตู้',
         columns: [
-          { title: 'เต็ม', align: 'right' },
-          { title: 'บวก', align: 'right' },
-          { title: 'รวม', align: 'right' },
+          {
+            title: 'เต็ม',
+            field: 'single',
+            align: 'right',
+            bottomCalc: 'sum',
+          },
+          {
+            title: 'บวก',
+            field: 'mix',
+            align: 'right',
+            bottomCalc: 'sum',
+          },
+          {
+            title: 'รวม',
+            field: 'total',
+            align: 'right',
+            bottomCalc: 'sum',
+          },
         ],
       },
       {
         title: 'จองคิว (Booked)',
         field: 'booked',
         align: 'right',
+        bottomCalc: 'sum',
         editor: 'number',
+        validator: 'min:0',
         editorParams: { min: 0 },
       },
       {
@@ -40,27 +65,54 @@ const createTable = (doc) => {
             title: 'No Action',
             field: 'noaction',
             align: 'right',
+            bottomCalc: 'sum',
             editor: 'number',
+            validator: 'min:0',
             editorParams: { min: 0 },
           },
           {
             title: 'Loading',
             field: 'loading',
             align: 'right',
+            bottomCalc: 'sum',
             editor: 'number',
+            validator: 'min:0',
             editorParams: { min: 0 },
           },
           {
             title: 'Completed',
             field: 'completed',
             align: 'right',
+            bottomCalc: 'sum',
             editor: 'number',
+            validator: 'min:0',
             editorParams: { min: 0 },
           },
           {
             title: '% completed',
             field: 'percent',
-            align: 'center',
+            align: 'left',
+            bottomCalc: 'avg',
+            bottomCalcFormatter: 'progress',
+            bottomCalcFormatterParams: {
+              color(val) {
+                const hue = val / 100 * (120 - 0) + 0;
+                return `hsl(${hue}, 100%, 50%)`;
+              },
+              legend(val) {
+                return `${val}%`;
+              },
+            },
+            formatter: 'progress',
+            formatterParams: {
+              color(val) {
+                const hue = val / 100 * (120 - 0) + 0;
+                return `hsl(${hue}, 100%, 50%)`;
+              },
+              legend(val) {
+                return `${val}%`;
+              },
+            },
           },
         ],
       },
@@ -71,6 +123,65 @@ const createTable = (doc) => {
         editor: 'textarea',
       },
     ],
+    ajaxResponse(url, params, res) {
+      const newRes = res.map((e) => {
+        e.total = e.single + e.mix;
+        // e.percent = e.completed / e.total * 100;
+        e.percent = Math.random().toFixed(2) * 100;
+        e.noaction = e.total - (e.booked + e.loading + e.completed);
+        return e;
+      });
+      // console.log(newRes);
+      return newRes;
+    },
+    ajaxLoaderLoading: `
+      <div class="preloader-wrapper active">
+        <div class="spinner-layer spinner-blue">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class=" circle"></div>
+          </div>
+        </div>
+        <div class="spinner-layer spinner-red">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class=" circle"></div>
+          </div>
+        </div>
+        <div class="spinner-layer spinner-yellow">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class=" circle"></div>
+          </div>
+        </div>
+        <div class="spinner-layer spinner-green">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class=" circle"></div>
+          </div>
+        </div>
+      </div>
+    `,
   });
 
   $('#tableUpdate').tabulator('setData', doc);

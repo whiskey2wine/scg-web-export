@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-// import $ from 'jquery';
+import $ from 'jquery';
 import 'materialize-css';
 
 import createChart from './chartFn';
@@ -8,10 +8,12 @@ import createTable from './updateTable';
 $(document).ready(() => {
   $('select').material_select();
 });
+
 const socket = io();
 socket.on('connect', () => {
   console.log('Connected to server.');
 });
+
 const pmList = {
   pm13: [],
   pm16: [],
@@ -83,11 +85,14 @@ fetch('http://localhost:3000/getdata')
     console.log('data', data);
     fetchData = data;
 
+    // push PINo into pmList
     banpong
       .concat(wangsala)
       .forEach(pm =>
         data.forEach(val => (val.location === pm ? pmList[pm].push(val.PINo) : false)));
+    console.log('pmList', pmList);
 
+    // calculate total and insert into object
     data.forEach((value) => {
       if (banpong.includes(value.location)) {
         bp[value.location].total += value.mix + value.single;
@@ -96,22 +101,25 @@ fetch('http://localhost:3000/getdata')
       }
     });
 
-    // -----------------------------
+    // Enable PM option that contains PI
+    $.each(pmList, (i, val) => {
+      if (val.length > 0) {
+        $(`#${i}`).prop('disabled', false);
+        $('select').material_select();
+      }
+    });
 
-    console.log('pmList', pmList);
     createChart('chartBp', bp, banpong);
     createChart('chartWs', ws, wangsala);
-    createTable();
 
-    // continue here ------------------------
-    // Enable PM option that contains PI
-    // obj.init.map((val, i) => {
-    //   if (val > 0) {
-    //     $pmListElement.children()[i + 1].disabled = false;
-    //     $('select').material_select();
-    //   }
-    //   return true;
-    // });
+    const doc = data.map((e) => {
+      e.total = e.single + e.mix;
+      // e.percent = e.completed / e.total * 100;
+      e.percent = Math.random().toFixed(2) * 100;
+      e.noaction = e.total - (e.booked + e.loading + e.completed);
+      return e;
+    });
+    createTable(doc);
   })
   .catch((err) => {
     console.log(err);
@@ -119,22 +127,34 @@ fetch('http://localhost:3000/getdata')
 
 // Insert PI when PM option has been selected
 $pmListElement.on('change', (e) => {
-  let piOption;
-  $('textarea.editor').val('');
+  console.log(e.target.value);
+  // $('#tableUpdate').tabulator({
+  //   ajaxResponse: (url, params, res) => console.log(res),
+  // });
+  $('#tableUpdate').tabulator('setData', `http://localhost:3000/getdata/${e.target.value}`);
 
-  if (pmList[e.target.value].length > 0) {
-    $piList.prop('disabled', false);
-    piOption = '<option value="" disabled selected>Select PI</option>';
-  }
+  // fetch(`http://localhost:3000/getdata/${e.target.value}`)
+  //   .then(res => res.json())
+  //   .then((res) => {
+  //     console.log(res);
+  //   });
 
-  if (pmList[e.target.value] !== undefined) {
-    pmList[e.target.value].forEach((el) => {
-      piOption += `<option value="${el}">${el}</option>`;
-    });
-  }
+  // let piOption;
+  // $('textarea.editor').val('');
 
-  $piList.html(piOption);
-  $('select').material_select();
+  // if (pmList[e.target.value].length > 0) {
+  //   $piList.prop('disabled', false);
+  //   piOption = '<option value="" disabled selected>Select PI</option>';
+  // }
+
+  // if (pmList[e.target.value] !== undefined) {
+  //   pmList[e.target.value].forEach((el) => {
+  //     piOption += `<option value="${el}">${el}</option>`;
+  //   });
+  // }
+
+  // $piList.html(piOption);
+  // $('select').material_select();
 });
 
 let selectedObj = {};
