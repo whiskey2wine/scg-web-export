@@ -44,7 +44,7 @@ const bp = {
   },
 };
 const ws = {
-  loaction: 'ws',
+  location: 'ws',
   pm45: {
     total: 0,
     booked: 0,
@@ -63,7 +63,7 @@ const ws = {
     loading: 0,
     completed: 0,
   },
-  IBB: {
+  ibb: {
     total: 0,
     booked: 0,
     loading: 0,
@@ -87,66 +87,29 @@ fetch('http://localhost:3000/getdata')
     data.map(value => (value.location === 'pm45' ? pmList.pm45.push(value.PINo) : false));
     data.map(value => (value.location === 'pm67' ? pmList.pm67.push(value.PINo) : false));
     data.map(value => (value.location === 'pm89' ? pmList.pm89.push(value.PINo) : false));
-    data.map(value => (value.location === 'IBB' ? pmList.ibb.push(value.PINo) : false));
+    data.map(value => (value.location === 'ibb' ? pmList.ibb.push(value.PINo) : false));
 
-    data.forEach((pi, i) => {
-      if (pi.bp13 !== undefined) {
-        bp.pm13.total +=
-          pi.bp13 +
-          pi.mx1316 +
-          pi.mx1345 +
-          pi.mx1367 +
-          pi.mx131645 +
-          pi.mx131667 +
-          pi.mx134567 +
-          pi.mx13164567;
-        bp.pm16.total +=
-          pi.bp16 +
-          pi.mx1316 +
-          pi.mx1645 +
-          pi.mx1667 +
-          pi.mx131645 +
-          pi.mx131667 +
-          pi.mx164567 +
-          pi.mx13164567;
-        ws.pm45.total +=
-          pi.ws45 +
-          pi.mx1345 +
-          pi.mx1645 +
-          pi.mx4567 +
-          pi.mx131645 +
-          pi.mx134567 +
-          pi.mx164567 +
-          pi.mx13164567;
-        ws.pm67.total +=
-          pi.ws67 +
-          pi.mx1367 +
-          pi.mx1667 +
-          pi.mx4567 +
-          pi.mx131667 +
-          pi.mx134567 +
-          pi.mx164567 +
-          pi.mx13164567;
-        ws.IBB.total += pi.wsIBB;
+    const banpong = ['pm13', 'pm16', 'pm17'];
+    const wangsala = ['pm45', 'pm67', 'pm89', 'ibb'];
+    data.map((value) => {
+      if (banpong.includes(value.location)) {
+        bp[value.location].total += value.mix + value.single;
+      } else if (wangsala.includes(value.location)) {
+        ws[value.location].total += value.mix + value.single;
       } else {
-        bp.pm17.total += pi.bp17 + pi.mx1789;
-        ws.pm89.total += pi.ws89 + pi.mx1789;
+        console.log('error:', value);
       }
+      return true;
     });
 
     // -----------------------------
 
     console.log('pmList', pmList);
-    // const obj = {
-    //   init: [bp13, bp16, bp17, ws45, ws67, ws89, wsIBB],
-    //   booked: [3, 2, 0, 1, 2, 0, 1],
-    //   process: [2, 1, 0, 1, 1, 0, 1],
-    //   completed: [4, 2, 0, 1, 1, 0, 1],
-    // };
     createChart('chartBp', bp, ['PM13', 'PM16', 'PM17']);
     createChart('chartWs', ws, ['PM45', 'PM67', 'PM89', 'IBB']);
     createTable();
 
+    // continue here ------------------------
     // Enable PM option that contains PI
     // obj.init.map((val, i) => {
     //   if (val > 0) {

@@ -19,14 +19,14 @@ export default (id, data, labels) => {
     };
   } else {
     doc = {
-      total: [data.pm45.total, data.pm67.total, data.pm89.total, data.IBB.total],
-      booked: [data.pm45.booked, data.pm67.booked, data.pm89.booked, data.IBB.booked],
-      loading: [data.pm45.loading, data.pm67.loading, data.pm89.loading, data.IBB.loading],
+      total: [data.pm45.total, data.pm67.total, data.pm89.total, data.ibb.total],
+      booked: [data.pm45.booked, data.pm67.booked, data.pm89.booked, data.ibb.booked],
+      loading: [data.pm45.loading, data.pm67.loading, data.pm89.loading, data.ibb.loading],
       completed: [
         data.pm45.completed,
         data.pm67.completed,
         data.pm89.completed,
-        data.IBB.completed,
+        data.ibb.completed,
       ],
     };
   }
