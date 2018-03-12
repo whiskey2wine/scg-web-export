@@ -74,6 +74,8 @@ const ws = {
 let fetchData;
 const $piList = $('#pino');
 const $pmListElement = $('#pm');
+const banpong = ['pm13', 'pm16', 'pm17'];
+const wangsala = ['pm45', 'pm67', 'pm89', 'ibb'];
 
 fetch('http://localhost:3000/getdata')
   .then(res => res.json())
@@ -81,32 +83,24 @@ fetch('http://localhost:3000/getdata')
     console.log('data', data);
     fetchData = data;
 
-    data.map(value => (value.location === 'pm13' ? pmList.pm13.push(value.PINo) : false));
-    data.map(value => (value.location === 'pm16' ? pmList.pm16.push(value.PINo) : false));
-    data.map(value => (value.location === 'pm17' ? pmList.pm17.push(value.PINo) : false));
-    data.map(value => (value.location === 'pm45' ? pmList.pm45.push(value.PINo) : false));
-    data.map(value => (value.location === 'pm67' ? pmList.pm67.push(value.PINo) : false));
-    data.map(value => (value.location === 'pm89' ? pmList.pm89.push(value.PINo) : false));
-    data.map(value => (value.location === 'ibb' ? pmList.ibb.push(value.PINo) : false));
+    banpong
+      .concat(wangsala)
+      .forEach(pm =>
+        data.forEach(val => (val.location === pm ? pmList[pm].push(val.PINo) : false)));
 
-    const banpong = ['pm13', 'pm16', 'pm17'];
-    const wangsala = ['pm45', 'pm67', 'pm89', 'ibb'];
-    data.map((value) => {
+    data.forEach((value) => {
       if (banpong.includes(value.location)) {
         bp[value.location].total += value.mix + value.single;
-      } else if (wangsala.includes(value.location)) {
-        ws[value.location].total += value.mix + value.single;
       } else {
-        console.log('error:', value);
+        ws[value.location].total += value.mix + value.single;
       }
-      return true;
     });
 
     // -----------------------------
 
     console.log('pmList', pmList);
-    createChart('chartBp', bp, ['PM13', 'PM16', 'PM17']);
-    createChart('chartWs', ws, ['PM45', 'PM67', 'PM89', 'IBB']);
+    createChart('chartBp', bp, banpong);
+    createChart('chartWs', ws, wangsala);
     createTable();
 
     // continue here ------------------------
