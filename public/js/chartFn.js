@@ -1,7 +1,8 @@
 import Chart from 'chart.js';
+import 'chartjs-plugin-datalabels';
 
 export default (id, data, labels) => {
-  // console.log(Chart.defaults);
+  console.log(Chart.defaults);
   console.log(data);
   Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
   Chart.defaults.scale.ticks.beginAtZero = true;
@@ -97,6 +98,21 @@ export default (id, data, labels) => {
         display: true,
         labels: {
           fontColor: 'rgb(255, 99, 132)',
+        },
+      },
+      plugins: {
+        datalabels: {
+          color: '#fff',
+          font: {
+            weight: 500,
+            size: 13,
+          },
+          display: (context) => {
+            const index = context.dataIndex;
+            const value = context.dataset.data[index];
+
+            return value > 0;
+          },
         },
       },
     },
