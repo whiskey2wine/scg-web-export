@@ -10,13 +10,20 @@ const config = {
 
 const kraft = `
     select * from [Export_ConfirmLocation_Kraft] 
-    where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
     `;
 
 const DupGyp = `
     select * from [Export_ConfirmLocation_DupGyp] 
-    where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
     `;
+// const kraft = `
+//     select * from [Export_ConfirmLocation_Kraft]
+//     where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
+//     `;
+
+// const DupGyp = `
+//     select * from [Export_ConfirmLocation_DupGyp]
+//     where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
+//     `;
 
 const data = async () => {
   try {

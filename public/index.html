@@ -26,8 +26,13 @@
 <body>
   <div class="container">
     <div class="chart card">
-      <div class="card-content">
-        <canvas id="myChart"></canvas>
+      <div class="card-content row">
+        <div class="col s12 m6">
+          <canvas id="chartBp"></canvas>
+        </div>
+        <div class="col s12 m6">
+          <canvas id="chartWs"></canvas>
+        </div>
       </div>
     </div>
 
@@ -49,32 +54,7 @@
           </div>
         </div>
         <div class="col s12">
-          <div class="row">
-            <div class="input-field col s12 m4">
-              <select id="pino" disabled>
-                <option value="">Select PI</option>
-              </select>
-              <label for="pino">Select PI No.</label>
-            </div>
-            <div class="col s12 m8">
-              <div class="input-field col s12 m3">
-                <input id="booked" type="number">
-                <label for="booked">Booked</label>
-              </div>
-              <div class="input-field col s12 m3">
-                <input id="on-process" type="number">
-                <label for="on-process">On Process</label>
-              </div>
-              <div class="input-field col s12 m3">
-                <input id="completed" type="number">
-                <label for="completed">Completed</label>
-              </div>
-            </div>
-          </div>
-          <!-- <div class="input-field"> -->
-          <textarea id="comment-box" class="editor"></textarea>
-          <!-- <label class="active" id="comment-box-label" for="comment-box">Comment</label> -->
-          <!-- </div> -->
+          <div id="tableUpdate"></div>
         </div>
         <div class="col s12 center-align" style="margin-top: 20px;">
           <button class="btn waves-effect waves-light blue accent-4" type="submit" name="action" id="submitBtn" disabled>Submit
@@ -82,12 +62,6 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <!-- <div class="card-content"> -->
-      <div id="tableUpdate"></div>
-      <!-- </div> -->
     </div>
 
     <!-- <script src="./js/libs/jquery-3.3.1.min.js"></script> -->
