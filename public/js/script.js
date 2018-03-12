@@ -81,65 +81,15 @@ fetch('http://localhost:3000/getdata')
     console.log('data', data);
     fetchData = data;
 
-    data.forEach((pi, i) => {
-      if (
-        pi.bp13 > 0 ||
-        pi.mx1316 > 0 ||
-        pi.mx1345 > 0 ||
-        pi.mx1367 > 0 ||
-        pi.mx131645 > 0 ||
-        pi.mx131667 > 0 ||
-        pi.mx134567 > 0 ||
-        pi.mx13164567 > 0
-      ) {
-        pmList.pm13.push(pi.PINo);
-      }
-      if (
-        pi.bp16 > 0 ||
-        pi.mx1316 > 0 ||
-        pi.mx1645 > 0 ||
-        pi.mx1667 > 0 ||
-        pi.mx131645 > 0 ||
-        pi.mx131667 > 0 ||
-        pi.mx164567 > 0 ||
-        pi.mx13164567 > 0
-      ) {
-        pmList.pm16.push(pi.PINo);
-      }
-      if (pi.bp17 > 0 || pi.mx1789 > 0) {
-        pmList.pm17.push(pi.PINo);
-      }
-      if (
-        pi.ws45 > 0 ||
-        pi.mx1345 > 0 ||
-        pi.mx1645 > 0 ||
-        pi.mx4567 > 0 ||
-        pi.mx131645 > 0 ||
-        pi.mx134567 > 0 ||
-        pi.mx164567 > 0 ||
-        pi.mx13164567 > 0
-      ) {
-        pmList.pm45.push(pi.PINo);
-      }
-      if (
-        pi.ws67 > 0 ||
-        pi.mx1367 > 0 ||
-        pi.mx1667 > 0 ||
-        pi.mx4567 > 0 ||
-        pi.mx131667 > 0 ||
-        pi.mx134567 > 0 ||
-        pi.mx164567 > 0 ||
-        pi.mx13164567 > 0
-      ) {
-        pmList.pm67.push(pi.PINo);
-      }
-      if (pi.ws89 > 0 || pi.mx1789 > 0) {
-        pmList.pm89.push(pi.PINo);
-      }
-      if (pi.wsIBB) {
-        pmList.ibb.push(pi.PINo);
-      }
+    data.map(value => (value.location === 'pm13' ? pmList.pm13.push(value.PINo) : false));
+    data.map(value => (value.location === 'pm16' ? pmList.pm16.push(value.PINo) : false));
+    data.map(value => (value.location === 'pm17' ? pmList.pm17.push(value.PINo) : false));
+    data.map(value => (value.location === 'pm45' ? pmList.pm45.push(value.PINo) : false));
+    data.map(value => (value.location === 'pm67' ? pmList.pm67.push(value.PINo) : false));
+    data.map(value => (value.location === 'pm89' ? pmList.pm89.push(value.PINo) : false));
+    data.map(value => (value.location === 'IBB' ? pmList.ibb.push(value.PINo) : false));
 
+    data.forEach((pi, i) => {
       if (pi.bp13 !== undefined) {
         bp.pm13.total +=
           pi.bp13 +
@@ -183,8 +133,7 @@ fetch('http://localhost:3000/getdata')
         ws.pm89.total += pi.ws89 + pi.mx1789;
       }
     });
-    console.log(bp);
-    console.log(ws);
+
     // -----------------------------
 
     console.log('pmList', pmList);

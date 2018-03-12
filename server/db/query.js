@@ -8,13 +8,6 @@ const config = {
   parseJSON: true,
 };
 
-const kraft = `
-    select * from [Export_ConfirmLocation_Kraft] 
-    `;
-
-const DupGyp = `
-    select * from [Export_ConfirmLocation_DupGyp] 
-    `;
 // const kraft = `
 //     select * from [Export_ConfirmLocation_Kraft]
 //     where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
@@ -25,17 +18,19 @@ const DupGyp = `
 //     where [posting_date] = dateadd(day,datediff(day,1,GETDATE()),0);
 //     `;
 
+const query = `
+  select * from [Export_Transaction];
+  `;
+
 const data = async () => {
   try {
     sql.close();
     console.log('sql connecting......');
     const pool = await sql.connect(config);
-    const resultKraft = await pool.request().query(kraft);
-    const resultDupGyp = await pool.request().query(DupGyp);
+    const doc = await pool.request().query(query);
     sql.close();
 
-    let result = resultKraft.recordset;
-    result = result.concat(resultDupGyp.recordset);
+    const result = doc.recordset;
     return result;
   } catch (err) {
     sql.close();

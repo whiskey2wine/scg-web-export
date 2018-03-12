@@ -2,7 +2,7 @@ import Chart from 'chart.js';
 import 'chartjs-plugin-datalabels';
 
 export default (id, data, labels) => {
-  console.log(Chart.defaults);
+  // console.log(Chart.defaults);
   console.log(data);
   Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
   Chart.defaults.scale.ticks.beginAtZero = true;
