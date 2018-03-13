@@ -1,9 +1,6 @@
 import 'jquery-ui';
 import 'jquery.tabulator';
 
-// $('body').html('test');
-// const data = require('../db.json');
-
 // console.log(data);
 
 // load sample data into the table
@@ -50,7 +47,7 @@ const createTable = (doc) => {
         ],
       },
       {
-        title: 'จองคิว (Booked)',
+        title: 'Booked',
         field: 'booked',
         align: 'right',
         bottomCalc: 'sum',
@@ -182,8 +179,27 @@ const createTable = (doc) => {
         </div>
       </div>
     `,
+    cellEdited(cell) {
+      // cell - cell component
+      const { data } = cell.cell.row;
+      console.log(data);
+      fetch('http://localhost:3000/update', {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(data),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            Materialize.toast('Data has been updated.', 2000);
+          } else {
+            Materialize.toast('Unable to update table.', 2000);
+          }
+        })
+        .catch(err => Materialize.toast('Unable to connect to server.', 4000));
+    },
   });
-
   $('#tableUpdate').tabulator('setData', doc);
 };
 
