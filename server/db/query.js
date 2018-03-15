@@ -1,4 +1,5 @@
 const sql = require('mssql');
+const moment = require('moment');
 
 const config = {
   user: 'sa',
@@ -9,12 +10,19 @@ const config = {
 };
 
 let query = `
-  select * from [Export_Transaction];
+  select * from [Export_Transaction] as t1
+  where load_date = '${moment().format('YYYY-MM-DD')}'
+  and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
 `;
+// let query = `
+//   select * from [Export_Transaction] as t1
+//   where load_date = '${moment().format('YYYY-MM-DD')}'
+//   and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
+// `;
 
 const q = (Query) => {
   query = Query;
-  console.log(query);
+  // console.log(query);
 };
 
 let updateQuery;
@@ -33,7 +41,9 @@ const data = async () => {
 
     const result = doc.recordset;
     query = `
-      select * from [Export_Transaction];
+      select * from [Export_Transaction] as t1
+      where load_date = '${moment().format('YYYY-MM-DD')}'
+      and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
     `;
     return result;
   } catch (err) {
@@ -45,12 +55,12 @@ const data = async () => {
 const update = async () => {
   try {
     sql.close();
-    console.log('sql connecting......');
+    console.log('sql connecting...... (update)');
     const pool = await sql.connect(config);
     const doc = await pool.request().query(updateQuery);
     // sql.close();
 
-    const result = doc.recordset;
+    const result = doc;
     return result;
   } catch (err) {
     sql.close();
@@ -63,5 +73,8 @@ sql.on('error', (err) => {
 });
 
 module.exports = {
-  data, q, update, updateQ,
+  data,
+  q,
+  update,
+  updateQ,
 };

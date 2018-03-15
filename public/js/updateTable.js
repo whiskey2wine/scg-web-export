@@ -1,25 +1,20 @@
 import 'jquery-ui';
 import 'jquery.tabulator';
+import uuuu from './script';
+// import { updateChart } from './chartFn';
 
 // console.log(data);
-
 // load sample data into the table
-const createTable = (doc) => {
+export default (doc) => {
   $('#tableUpdate').tabulator({
     placeholder: 'No Data Available',
-    movableRows: true,
-    movableColumns: true,
     height: '100%', // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
     layout: 'fitData', // fit columns to width of table (optional)
+    initialSort: [
+      { column: 'PINo', dir: 'asc' }, // sort by this first
+    ],
     columnVertAlign: 'middle',
     columns: [
-      {
-        rowHandle: true,
-        width: 20,
-        minWidth: 20,
-        // frozen: true,
-        headerSort: false,
-      },
       // Define Table Columns
       { title: 'PINo', field: 'PINo', align: 'center' },
       { title: 'Shipping', field: 'shipping', align: 'center' },
@@ -117,7 +112,7 @@ const createTable = (doc) => {
         title: 'สถานะตู้<br/> Remarks อื่นๆ',
         field: 'comment',
         align: 'left',
-        editor: 'textarea',
+        editor: 'input',
       },
     ],
     ajaxResponse(url, params, res) {
@@ -182,7 +177,7 @@ const createTable = (doc) => {
     cellEdited(cell) {
       // cell - cell component
       const { data } = cell.cell.row;
-      console.log(data);
+      console.log(cell);
       fetch('http://localhost:3000/update', {
         method: 'POST', // or 'PUT'
         body: JSON.stringify(data),
@@ -193,6 +188,8 @@ const createTable = (doc) => {
         .then((res) => {
           if (res.status === 200) {
             Materialize.toast('Data has been updated.', 2000);
+            // socket.emit('triggerUpdate', data);
+            uuuu(data);
           } else {
             Materialize.toast('Unable to update table.', 2000);
           }
@@ -200,7 +197,5 @@ const createTable = (doc) => {
         .catch(err => Materialize.toast('Unable to connect to server.', 4000));
     },
   });
-  $('#tableUpdate').tabulator('setData', doc);
+  // $('#tableUpdate').tabulator('setData', doc);
 };
-
-export default createTable;

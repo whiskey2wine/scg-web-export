@@ -6,9 +6,6 @@ export default (id, data, labels) => {
   console.log(data);
   Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
   Chart.defaults.scale.ticks.beginAtZero = true;
-  // Chart.defaults.global = {
-  //   tooltipTemplate: '<%if (label){%><%=label%>: <%}%><%= value %>',
-  // };
   let doc;
   if (data.location === 'bp') {
     doc = {
@@ -32,34 +29,38 @@ export default (id, data, labels) => {
   }
 
   const ctx = document.getElementById(id);
-  const myChart = new Chart(ctx, {
+  return new Chart(ctx, {
     type: 'horizontalBar',
     data: {
-      labels,
+      labels: labels.map(e => e.toUpperCase()),
       datasets: [
         {
           label: 'Booked',
-          data: [doc.booked[0], doc.booked[1], doc.booked[2], doc.booked[3]],
-          backgroundColor: '#059BFF',
+          data: doc.booked.map(val => val),
+          backgroundColor: '#0081FF',
         },
         {
-          label: 'On Process',
-          data: [doc.loading[0], doc.loading[1], doc.loading[2], doc.loading[3]],
+          label: 'Loading',
+          data: doc.loading.map(val => val),
           backgroundColor: '#FF9124',
         },
         {
           label: 'Completed',
-          data: [doc.completed[0], doc.completed[1], doc.completed[2], doc.completed[3]],
-          backgroundColor: '#22CECE',
+          data: doc.completed.map(val => val),
+          backgroundColor: '#16FF0B',
         },
         {
           label: 'No Action',
-          data: [
-            doc.total[0] - (doc.booked[0] + doc.loading[0] + doc.completed[0]),
-            doc.total[1] - (doc.booked[1] + doc.loading[1] + doc.completed[1]),
-            doc.total[2] - (doc.booked[2] + doc.loading[2] + doc.completed[2]),
-            doc.total[3] - (doc.booked[3] + doc.loading[3] + doc.completed[3]),
-          ],
+          data: doc.total.map((val, i) => {
+            const result = val - (doc.booked[i] + doc.loading[i] + doc.completed[i]);
+            return result;
+          }),
+          // data: [
+          //   doc.total[0] - (doc.booked[0] + doc.loading[0] + doc.completed[0]),
+          //   doc.total[1] - (doc.booked[1] + doc.loading[1] + doc.completed[1]),
+          //   doc.total[2] - (doc.booked[2] + doc.loading[2] + doc.completed[2]),
+          //   doc.total[3] - (doc.booked[3] + doc.loading[3] + doc.completed[3]),
+          // ],
           backgroundColor: '#FF4C52',
         },
       ],
@@ -119,5 +120,15 @@ export default (id, data, labels) => {
   });
 };
 
+const updateChart = (id, data, labels) => {
+  // id.data.labels.push(labels);
+  console.log(id.data);
+  id.data.datasets.forEach((dataset) => {
+    // dataset.data.push(data);
+    console.log(dataset);
+  });
+  // console.log(id.data);
+};
+
 // module.exports.createChart = createChart;
-// export { createChart };
+export { updateChart };

@@ -5,6 +5,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
+const moment = require('moment');
 
 const query = require('./db/query');
 
@@ -19,7 +20,11 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 io.on('connection', (socket) => {
-  console.log('New user connected');
+  console.log(`New user connected${socket.request.headers['user-agent']}`);
+  socket.on('triggerUpdate', (data) => {
+    console.log(data);
+    io.emit('updateChart', data);
+  });
 });
 
 app.get('/', (req, res) => {
@@ -40,8 +45,10 @@ app.get('/getdata', (req, res) => {
 app.get('/getdata/:pm', (req, res) => {
   // res.send(req.params);
   query.q(`
-    select * from [Export_Transaction]
+    select * from [Export_Transaction] as t1
     where location = '${req.params.pm}'
+    and load_date = '${moment().format('YYYY-MM-DD')}'
+    and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
   `);
   query
     .data()
@@ -64,46 +71,19 @@ app.post('/update', (req, res) => {
   values ('${req.body.PINo}', '${req.body.location}', '${req.body.shipping}', ${req.body.single}, ${
   req.body.mix
 }, ${req.body.booked}, ${req.body.noaction}, 
-  ${req.body.loading}, ${req.body.completed}, '${req.body.comment}', '${req.body.load_date}', '${
-  req.body.excel_date
-}', ${req.body.complete_status});
+  ${req.body.loading}, ${req.body.completed}, REPLACE('${req.body.comment}', 'null', ''), '${
+  req.body.load_date
+}', '${req.body.excel_date}', ${req.body.complete_status});
 `);
   query
     .update()
     .then((response) => {
-      res.send(response);
-      console.log(response);
+      res.send('updated');
+      // console.log(response);
     })
     .catch((e) => {
       console.log(e);
     });
-  //   req.body.forEach((record) => {
-  //     if (record.completed / record.total === 1) {
-  //       record.complete_status = true;
-  //     }
-  //     query.q(`
-  //       insert into [Export_Transaction] (PINo, location, shipping, single, mix, booked, noaction, loading, completed, comment, load_date, excel_date, complete_status)
-  //       values ('${record.PINo}', '${record.location}', '${record.shipping}', ${record.single}, ${
-  //   record.mix
-  // }, ${record.booked}, ${record.noaction}, ${record.loading}, ${record.completed}, '${
-  //   record.comment
-  // }', '${record.load_date}', '${record.excel_date}', ${record.complete_status ? 1 : 0});
-  //     `);
-
-  // query
-  //   .data()
-  //   .then((response) => {
-  //     // res.send(response);
-  //     console.log(response);
-  //   })
-  //   .catch((e) => {
-  //     console.log(e);
-  //   });
-  //   });
-  // const que = `
-  // insert into [Export_Transaction] (PINo, location, shipping, single, mix, booked, noaction, loading, completed, comment, load_date, excel_date, complete_status)
-  // `;
-  // res.status(200).send();
 });
 
 server.listen(port, (err) => {

@@ -1,14 +1,24 @@
 import io from 'socket.io-client';
 import $ from 'jquery';
 import moment from 'moment';
+// import html2canvas from 'html2canvas';
 import 'materialize-css';
 
-import createChart from './chartFn';
+import createChart, { updateChart } from './chartFn';
 import createTable from './updateTable';
 
 $(document).ready(() => {
   $('select').material_select();
 });
+
+// html2canvas(document.getElementById('chartBp')).then((canvas) => {
+//   document.body.appendChild(canvas);
+//   $('#blank').attr('href', canvas.toDataURL('image/jpeg'));
+//   // console.log(canvas.toDataURL('image/jpeg', 1.0));
+//   $('#blank').attr('download', `ConfirmLoad ${moment().format('DD-MM-YYYY')}.jpeg`);
+//   // $('#blank')[0].click();
+// });
+
 const host = 'http://localhost:3000';
 const socket = io();
 socket.on('connect', () => {
@@ -74,11 +84,42 @@ const ws = {
   },
 };
 
+let chartBp;
+let chartWs;
+
 let fetchData;
-const $piList = $('#pino');
 const $pmListElement = $('#pm');
-const banpong = ['pm13', 'pm16', 'pm17'];
-const wangsala = ['pm45', 'pm67', 'pm89', 'ibb'];
+const banpongLabels = ['pm13', 'pm16', 'pm17'];
+const wangsalaLabels = ['pm45', 'pm67', 'pm89', 'ibb'];
+
+const calTotal = (data) => {
+  const keys = Object.keys(bp.pm13);
+  console.log(keys);
+  banpongLabels.forEach((pm) => {
+    keys.forEach((x) => {
+      bp[pm][x] = 0;
+    });
+  });
+  wangsalaLabels.forEach((pm) => {
+    keys.forEach((x) => {
+      ws[pm][x] = 0;
+    });
+  });
+
+  data.forEach((value) => {
+    if (banpongLabels.includes(value.location)) {
+      bp[value.location].total += value.mix + value.single;
+      bp[value.location].booked += value.booked;
+      bp[value.location].loading += value.loading;
+      bp[value.location].completed += value.completed;
+    } else {
+      ws[value.location].total += value.mix + value.single;
+      ws[value.location].booked += value.booked;
+      ws[value.location].loading += value.loading;
+      ws[value.location].completed += value.completed;
+    }
+  });
+};
 
 fetch(`${host}/getdata`)
   .then(res => res.json())
@@ -87,20 +128,14 @@ fetch(`${host}/getdata`)
     fetchData = data;
 
     // push PINo into pmList
-    banpong
-      .concat(wangsala)
+    banpongLabels
+      .concat(wangsalaLabels)
       .forEach(pm =>
         data.forEach(val => (val.location === pm ? pmList[pm].push(val.PINo) : false)));
     console.log('pmList', pmList);
 
     // calculate total and insert into object
-    data.forEach((value) => {
-      if (banpong.includes(value.location)) {
-        bp[value.location].total += value.mix + value.single;
-      } else {
-        ws[value.location].total += value.mix + value.single;
-      }
-    });
+    calTotal(data);
 
     // Enable PM option that contains PI
     $.each(pmList, (i, val) => {
@@ -110,8 +145,8 @@ fetch(`${host}/getdata`)
       }
     });
 
-    createChart('chartBp', bp, banpong);
-    createChart('chartWs', ws, wangsala);
+    chartBp = createChart('chartBp', bp, banpongLabels);
+    chartWs = createChart('chartWs', ws, wangsalaLabels);
 
     const doc = data.map((e) => {
       e.total = e.single + e.mix;
@@ -126,34 +161,52 @@ fetch(`${host}/getdata`)
     console.log(err);
   });
 
+let selectedPM;
 // Insert PI when PM option has been selected
 $pmListElement.on('change', (e) => {
-  console.log(e.target.value);
-  $('#tableUpdate').tabulator('setData', `${host}/getdata/${e.target.value}`);
-});
-
-let selectedObj = {};
-// Display comment when PI has been selected and enable textarea
-$piList.on('change', (e) => {
-  $('#submitBtn').prop('disabled', false);
-  const found = fetchData.find(val => val.PINo === e.target.value);
-  selectedObj = {
-    selected: found,
-  };
-  console.log(selectedObj);
-  $('textarea.editor').val(found.remarks);
-});
-
-$(document).on('click', '#submitBtn', (e) => {
-  const data = $('#tableUpdate').tabulator('getData', true);
-
-  // console.log(data);
+  selectedPM = e.target.value;
+  if (e.target.value === 'selectAll') {
+    $('#tableUpdate').tabulator('setData', `${host}/getdata`);
+  } else {
+    $('#tableUpdate').tabulator('setData', `${host}/getdata/${e.target.value}`);
+  }
+  // console.log($('.active.selected span').html());
 });
 
 $(document).on('click', '#downloadBtn', () => {
   $('#tableUpdate').tabulator(
     'download',
     'xlsx',
-    `ConfirmLoad ${moment().format('DD-MM-YYYY')}.xlsx`,
+    `ConfirmLoad ${moment().format('DD-MM-YYYY')} ${selectedPM}.xlsx`,
   );
 });
+
+const uuuu = (data) => {
+  console.log(data);
+  // socket.emit('triggerUpdate', data);
+  fetch(`${host}/getdata`)
+    .then(res => res.json())
+    .then((newData) => {
+      console.log(newData);
+      socket.emit('triggerUpdate', newData);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+socket.on('updateChart', (data) => {
+  console.log(data);
+  calTotal(data);
+  if (data.location === 'pm13' || data.location === 'pm16' || data.location === 'pm17') {
+    // updateChart(chartBp, data);
+    chartBp.destroy();
+    chartBp = createChart('chartBp', bp, banpongLabels);
+  } else {
+    chartWs.destroy();
+    chartWs = createChart('chartWs', ws, wangsalaLabels);
+    // updateChart(chartWs, data);
+  }
+});
+
+export default uuuu;
