@@ -10,7 +10,9 @@
   <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
   <link rel="stylesheet" href="./css/libs/materialize.min.css">
   <link rel="stylesheet" href="./css/libs/materialize-icons/material-icons.css">
-  <link rel="stylesheet" href="./css/libs/tabulator/tabulator_modern.min.css">
+  <!-- <link rel="stylesheet" href="./css/libs/tabulator/tabulator_simple.min.css"> -->
+  <link rel="stylesheet" href="./css/libs/tabulator/bootstrap/tabulator_bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="./css/libs/tabulator/semantic-ui/tabulator_semantic-ui.min.css"> -->
   <link rel="stylesheet" href="./css/style.css">
 
   <link rel="apple-touch-icon" sizes="180x180" href="./favicons/apple-touch-icon.png">
@@ -60,12 +62,8 @@
           </button>
         </div>
         <div class="col s12">
-          <div id="tableUpdate"></div>
-        </div>
-        <div class="col s12 center-align" style="margin-top: 20px;">
-          <button class="btn waves-effect waves-light blue accent-4" type="submit" name="action" id="submitBtn">Submit
-            <i class="material-icons right">send</i>
-          </button>
+          <!-- <div id="tableUpdate" class="striped compact celled"></div> -->
+          <div id="tableUpdate" class="table-striped table-bordered"></div>
         </div>
       </div>
     </div>

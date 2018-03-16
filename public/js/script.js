@@ -4,7 +4,7 @@ import moment from 'moment';
 // import html2canvas from 'html2canvas';
 import 'materialize-css';
 
-import createChart, { updateChart } from './chartFn';
+import createChart from './chartFn';
 import createTable from './updateTable';
 
 $(document).ready(() => {
@@ -20,6 +20,7 @@ $(document).ready(() => {
 // });
 
 const host = 'http://localhost:3000';
+// const host = 'http://172.29.0.143:3000';
 const socket = io();
 socket.on('connect', () => {
   console.log('Connected to server.');
@@ -158,7 +159,7 @@ fetch(`${host}/getdata`)
     createTable(doc);
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
   });
 
 let selectedPM;
@@ -191,22 +192,17 @@ const uuuu = (data) => {
       socket.emit('triggerUpdate', newData);
     })
     .catch((err) => {
-      console.log(err);
+      console.error(err);
     });
 };
 
 socket.on('updateChart', (data) => {
   console.log(data);
   calTotal(data);
-  if (data.location === 'pm13' || data.location === 'pm16' || data.location === 'pm17') {
-    // updateChart(chartBp, data);
-    chartBp.destroy();
-    chartBp = createChart('chartBp', bp, banpongLabels);
-  } else {
-    chartWs.destroy();
-    chartWs = createChart('chartWs', ws, wangsalaLabels);
-    // updateChart(chartWs, data);
-  }
+  chartBp.destroy();
+  chartWs.destroy();
+  chartBp = createChart('chartBp', bp, banpongLabels);
+  chartWs = createChart('chartWs', ws, wangsalaLabels);
 });
 
 export default uuuu;

@@ -11,3 +11,7 @@ body {
 .tabulator-col-title {
   font-family: "Roboto", sans-serif !important;
 }
+
+.editable {
+  background: RGBA(66, 202, 119, 0.2);
+}

@@ -6,10 +6,13 @@ import uuuu from './script';
 // console.log(data);
 // load sample data into the table
 export default (doc) => {
+  console.log(doc);
   $('#tableUpdate').tabulator({
     placeholder: 'No Data Available',
+    persistentLayout: true,
     height: '100%', // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-    layout: 'fitData', // fit columns to width of table (optional)
+    layout: 'fitColumns', // fit columns to width of table (optional)
+    layoutColumnsOnNewData: true,
     initialSort: [
       { column: 'PINo', dir: 'asc' }, // sort by this first
     ],
@@ -17,7 +20,12 @@ export default (doc) => {
     columns: [
       // Define Table Columns
       { title: 'PINo', field: 'PINo', align: 'center' },
-      { title: 'Shipping', field: 'shipping', align: 'center' },
+      {
+        title: 'Shipping',
+        field: 'shipping',
+        align: 'center',
+        width: 100,
+      },
       {
         title: 'จำนวนตู้',
         columns: [
@@ -26,18 +34,21 @@ export default (doc) => {
             field: 'single',
             align: 'right',
             bottomCalc: 'sum',
+            width: 70,
           },
           {
             title: 'บวก',
             field: 'mix',
             align: 'right',
             bottomCalc: 'sum',
+            width: 70,
           },
           {
             title: 'รวม',
             field: 'total',
             align: 'right',
             bottomCalc: 'sum',
+            width: 70,
           },
         ],
       },
@@ -49,6 +60,8 @@ export default (doc) => {
         editor: 'number',
         validator: 'min:0',
         editorParams: { min: 0 },
+        cssClass: 'editable',
+        width: 90,
       },
       {
         title: 'สรุป status',
@@ -58,9 +71,7 @@ export default (doc) => {
             field: 'noaction',
             align: 'right',
             bottomCalc: 'sum',
-            editor: 'number',
-            validator: 'min:0',
-            editorParams: { min: 0 },
+            width: 110,
           },
           {
             title: 'Loading',
@@ -70,6 +81,8 @@ export default (doc) => {
             editor: 'number',
             validator: 'min:0',
             editorParams: { min: 0 },
+            cssClass: 'editable',
+            width: 100,
           },
           {
             title: 'Completed',
@@ -79,11 +92,14 @@ export default (doc) => {
             editor: 'number',
             validator: 'min:0',
             editorParams: { min: 0 },
+            cssClass: 'editable',
+            width: 110,
           },
           {
-            title: '% completed',
+            title: 'Progress',
             field: 'percent',
             align: 'left',
+            width: 120,
             bottomCalc: 'avg',
             bottomCalcFormatter: 'progress',
             bottomCalcFormatterParams: {
@@ -92,7 +108,7 @@ export default (doc) => {
                 return `hsl(${hue}, 100%, 50%)`;
               },
               legend(val) {
-                return `${val}%`;
+                return `${parseInt(val, 10).toFixed(0)}%`;
               },
             },
             formatter: 'progress',
@@ -102,7 +118,7 @@ export default (doc) => {
                 return `hsl(${hue}, 100%, 50%)`;
               },
               legend(val) {
-                return `${val}%`;
+                return `${parseInt(val, 10).toFixed(0)}%`;
               },
             },
           },
@@ -113,13 +129,15 @@ export default (doc) => {
         field: 'comment',
         align: 'left',
         editor: 'input',
+        formatter: 'textarea',
+        minWidth: 135,
       },
     ],
     ajaxResponse(url, params, res) {
       const newRes = res.map((e) => {
         e.total = e.single + e.mix;
-        // e.percent = e.completed / e.total * 100;
-        e.percent = Math.random().toFixed(2) * 100;
+        e.percent = e.completed / e.total * 100;
+        // e.percent = Math.random().toFixed(2) * 100;
         e.noaction = e.total - (e.booked + e.loading + e.completed);
         return e;
       });
@@ -178,7 +196,15 @@ export default (doc) => {
       // cell - cell component
       const { data } = cell.cell.row;
       console.log(cell);
+      console.log(cell.getField());
+      if (cell.getField() === 'completed') {
+        const cellValue = cell.getValue();
+        const row = cell.getRow();
+        const rowData = row.getData();
+        row.update({ percent: cellValue / rowData.total * 100 });
+      }
       fetch('http://localhost:3000/update', {
+        // fetch('http://172.29.0.143:3000/update', {
         method: 'POST', // or 'PUT'
         body: JSON.stringify(data),
         headers: new Headers({
@@ -195,6 +221,14 @@ export default (doc) => {
           }
         })
         .catch(err => Materialize.toast('Unable to connect to server.', 4000));
+    },
+    rowFormatter(row) {
+      // console.log(row);
+      if (row.getData().completed / row.getData().total === 1) {
+        row.getElement().addClass('success'); // mark rows with age greater than or equal to 18 as successfull;
+      } else {
+        row.getElement().removeClass('success');
+      }
     },
   });
   // $('#tableUpdate').tabulator('setData', doc);
