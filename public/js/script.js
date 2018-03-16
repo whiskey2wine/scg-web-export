@@ -11,12 +11,13 @@ $(document).ready(() => {
   $('select').material_select();
 });
 
-// html2canvas(document.getElementById('chartBp')).then((canvas) => {
-//   document.body.appendChild(canvas);
-//   $('#blank').attr('href', canvas.toDataURL('image/jpeg'));
-//   // console.log(canvas.toDataURL('image/jpeg', 1.0));
-//   $('#blank').attr('download', `ConfirmLoad ${moment().format('DD-MM-YYYY')}.jpeg`);
-//   // $('#blank')[0].click();
+// html2canvas(document.body).then((canvas) => {
+// console.log(canvas);
+// document.body.appendChild(canvas);
+// $('#blank').attr('href', canvas.toDataURL('image/jpeg'));
+// console.log(canvas.toDataURL('image/jpeg', 1.0));
+// $('#blank').attr('download', `ConfirmLoad ${moment().format('DD-MM-YYYY')}.jpeg`);
+// $('#blank')[0].click();
 // });
 
 const host = 'http://localhost:3000';
@@ -146,8 +147,8 @@ fetch(`${host}/getdata`)
       }
     });
 
-    chartBp = createChart('chartBp', bp, banpongLabels);
-    chartWs = createChart('chartWs', ws, wangsalaLabels);
+    chartBp = createChart('chartBp', bp, banpongLabels, 'Banpong');
+    chartWs = createChart('chartWs', ws, wangsalaLabels, 'Wangsala');
 
     const doc = data.map((e) => {
       e.total = e.single + e.mix;
@@ -201,8 +202,8 @@ socket.on('updateChart', (data) => {
   calTotal(data);
   chartBp.destroy();
   chartWs.destroy();
-  chartBp = createChart('chartBp', bp, banpongLabels);
-  chartWs = createChart('chartWs', ws, wangsalaLabels);
+  chartBp = createChart('chartBp', bp, banpongLabels, 'Banpong');
+  chartWs = createChart('chartWs', ws, wangsalaLabels, 'Wangsala');
 });
 
 export default uuuu;

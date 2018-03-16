@@ -9,7 +9,17 @@ export default (doc) => {
   console.log(doc);
   $('#tableUpdate').tabulator({
     placeholder: 'No Data Available',
-    persistentLayout: true,
+    groupBy: 'location',
+    groupToggleElement: 'header',
+    groupHeader(value, count, data, group) {
+      // value - the value all members of this group share
+      // count - the number of rows in this group
+      // data - an array of all the row data objects in this group
+      // group - the group component for the group
+      const item = count === 1 ? 'item' : 'items';
+
+      return `${value.toUpperCase()}<span margin-left:10px;'>(${count} ${item})</span>`;
+    },
     height: '100%', // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
     layout: 'fitColumns', // fit columns to width of table (optional)
     layoutColumnsOnNewData: true,

@@ -1,7 +1,7 @@
 import Chart from 'chart.js';
 import 'chartjs-plugin-datalabels';
 
-export default (id, data, labels) => {
+export default (id, data, labels, name) => {
   // console.log(Chart.defaults);
   console.log(data);
   Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
@@ -66,6 +66,11 @@ export default (id, data, labels) => {
       ],
     },
     options: {
+      title: {
+        display: true,
+        fontSize: 14,
+        text: name,
+      },
       responsive: true,
       tooltips: {
         callbacks: {
