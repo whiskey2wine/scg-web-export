@@ -1,11 +1,7 @@
 import Chart from 'chart.js';
 import 'chartjs-plugin-datalabels';
 
-export default (id, data, labels, name) => {
-  // console.log(Chart.defaults);
-  console.log(data);
-  Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
-  Chart.defaults.scale.ticks.beginAtZero = true;
+const setDoc = (data) => {
   let doc;
   if (data.location === 'bp') {
     doc = {
@@ -13,6 +9,7 @@ export default (id, data, labels, name) => {
       booked: [data.pm13.booked, data.pm16.booked, data.pm17.booked],
       loading: [data.pm13.loading, data.pm16.loading, data.pm17.loading],
       completed: [data.pm13.completed, data.pm16.completed, data.pm17.completed],
+      location: data.location,
     };
   } else {
     doc = {
@@ -25,8 +22,22 @@ export default (id, data, labels, name) => {
         data.pm89.completed,
         data.ibb.completed,
       ],
+      location: data.location,
     };
   }
+
+  return doc;
+};
+
+export const updateChart = data => setDoc(data);
+
+export default (id, data, labels, name) => {
+  // console.log(Chart.defaults);
+  console.log(data);
+  Chart.defaults.global.defaultFontFamily = "'Roboto', 'Helvetica', 'Arial', sans-serif";
+  Chart.defaults.scale.ticks.beginAtZero = true;
+
+  const doc = setDoc(data);
 
   const ctx = document.getElementById(id);
   return new Chart(ctx, {
@@ -125,15 +136,15 @@ export default (id, data, labels, name) => {
   });
 };
 
-const updateChart = (id, data, labels) => {
-  // id.data.labels.push(labels);
-  console.log(id.data);
-  id.data.datasets.forEach((dataset) => {
-    // dataset.data.push(data);
-    console.log(dataset);
-  });
-  // console.log(id.data);
-};
+// const updateChart = (id, data, labels) => {
+//   // id.data.labels.push(labels);
+//   console.log(id.data);
+//   id.data.datasets.forEach((dataset) => {
+//     // dataset.data.push(data);
+//     console.log(dataset);
+//   });
+//   // console.log(id.data);
+// };
 
 // module.exports.createChart = createChart;
-export { updateChart };
+// export { updateChart };

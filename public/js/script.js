@@ -4,7 +4,7 @@ import moment from 'moment';
 // import html2canvas from 'html2canvas';
 import 'materialize-css';
 
-import createChart from './chartFn';
+import createChart, { updateChart } from './chartFn';
 import createTable from './updateTable';
 
 $(document).ready(() => {
@@ -147,7 +147,7 @@ fetch(`${host}/getdata`)
 
     chartBp = createChart('chartBp', bp, banpongLabels, 'Banpong');
     chartWs = createChart('chartWs', ws, wangsalaLabels, 'Wangsala');
-
+    console.log(chartBp.data.datasets);
     const doc = data.map((e) => {
       e.total = e.single + e.mix;
       // e.percent = e.completed / e.total * 100;
@@ -196,12 +196,39 @@ const uuuu = (data) => {
 };
 
 socket.on('updateChart', (data) => {
-  console.log(data);
   calTotal(data);
-  chartBp.destroy();
-  chartWs.destroy();
-  chartBp = createChart('chartBp', bp, banpongLabels, 'Banpong');
-  chartWs = createChart('chartWs', ws, wangsalaLabels, 'Wangsala');
+  const newBp = updateChart(bp);
+  const newWs = updateChart(ws);
+  chartBp.data.datasets.forEach((status) => {
+    if (status.label === 'Booked') {
+      status.data = newBp.booked;
+    }
+    if (status.label === 'Loading') {
+      status.data = newBp.loading;
+    }
+    if (status.label === 'Completed') {
+      status.data = newBp.completed;
+    }
+    if (status.label === 'No Action') {
+      status.data = status.data.map((val, i) => newBp.total[i] - (newBp.booked[i] + newBp.loading[i] + newBp.completed[i]));
+    }
+  });
+  chartBp.update();
+  chartWs.data.datasets.forEach((status) => {
+    if (status.label === 'Booked') {
+      status.data = newWs.booked;
+    }
+    if (status.label === 'Loading') {
+      status.data = newWs.loading;
+    }
+    if (status.label === 'Completed') {
+      status.data = newWs.completed;
+    }
+    if (status.label === 'No Action') {
+      status.data = status.data.map((val, i) => newWs.total[i] - (newWs.booked[i] + newWs.loading[i] + newWs.completed[i]));
+    }
+  });
+  chartWs.update();
 });
 
 export default uuuu;

@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
   console.log(`New user connected [${socket.request.connection.remoteAddress}]`);
 
   socket.on('triggerUpdate', (data) => {
-    console.log(data);
+    console.log('Data has been updated.');
     io.emit('updateChart', data);
   });
 });

@@ -34,7 +34,7 @@ const updateQ = (Query) => {
 const data = async () => {
   try {
     sql.close();
-    console.log('sql connecting......');
+    // console.log('sql connecting......');
     const pool = await sql.connect(config);
     const doc = await pool.request().query(query);
     // sql.close();
@@ -55,7 +55,7 @@ const data = async () => {
 const update = async () => {
   try {
     sql.close();
-    console.log('sql connecting...... (update)');
+    // console.log('sql connecting...... (update)');
     const pool = await sql.connect(config);
     const doc = await pool.request().query(updateQuery);
     // sql.close();
