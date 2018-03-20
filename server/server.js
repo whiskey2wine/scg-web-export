@@ -80,7 +80,6 @@ app.post('/update', (req, res) => {
     .update()
     .then((response) => {
       res.send('updated');
-      // console.log(response);
     })
     .catch((e) => {
       console.log(e);

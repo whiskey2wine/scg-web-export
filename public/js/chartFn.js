@@ -66,12 +66,6 @@ export default (id, data, labels, name) => {
             const result = val - (doc.booked[i] + doc.loading[i] + doc.completed[i]);
             return result;
           }),
-          // data: [
-          //   doc.total[0] - (doc.booked[0] + doc.loading[0] + doc.completed[0]),
-          //   doc.total[1] - (doc.booked[1] + doc.loading[1] + doc.completed[1]),
-          //   doc.total[2] - (doc.booked[2] + doc.loading[2] + doc.completed[2]),
-          //   doc.total[3] - (doc.booked[3] + doc.loading[3] + doc.completed[3]),
-          // ],
           backgroundColor: '#FF4C52',
         },
       ],
@@ -135,16 +129,3 @@ export default (id, data, labels, name) => {
     },
   });
 };
-
-// const updateChart = (id, data, labels) => {
-//   // id.data.labels.push(labels);
-//   console.log(id.data);
-//   id.data.datasets.forEach((dataset) => {
-//     // dataset.data.push(data);
-//     console.log(dataset);
-//   });
-//   // console.log(id.data);
-// };
-
-// module.exports.createChart = createChart;
-// export { updateChart };

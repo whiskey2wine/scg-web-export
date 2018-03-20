@@ -1,7 +1,6 @@
 import io from 'socket.io-client';
 import $ from 'jquery';
 import moment from 'moment';
-// import html2canvas from 'html2canvas';
 import 'materialize-css';
 
 import createChart, { updateChart } from './chartFn';
@@ -10,15 +9,6 @@ import createTable from './updateTable';
 $(document).ready(() => {
   $('select').material_select();
 });
-
-// html2canvas(document.body).then((canvas) => {
-// console.log(canvas);
-// document.body.appendChild(canvas);
-// $('#blank').attr('href', canvas.toDataURL('image/jpeg'));
-// console.log(canvas.toDataURL('image/jpeg', 1.0));
-// $('#blank').attr('download', `ConfirmLoad ${moment().format('DD-MM-YYYY')}.jpeg`);
-// $('#blank')[0].click();
-// });
 
 const host = 'http://localhost:3000';
 // const host = 'http://172.29.0.143:3000';
