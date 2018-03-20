@@ -5,6 +5,21 @@ import uuuu from './script';
 
 // console.log(data);
 // load sample data into the table
+
+const maximum = function (cell, value, parameters) {
+  // cell - the cell component for the edited cell
+  // value - the new input value of the cell
+  // parameters - the parameters passed in with the validator
+  const rowData = cell.getRow().getData();
+  const field = cell.getColumn().getField();
+
+  const current = rowData.booked + rowData.loading + rowData.completed;
+  const result = current - rowData[field];
+  const max = rowData.total - result;
+
+  return value <= max;
+};
+
 export default (doc) => {
   console.log(doc);
   $('#tableUpdate').tabulator({
@@ -68,7 +83,7 @@ export default (doc) => {
         align: 'right',
         bottomCalc: 'sum',
         editor: 'number',
-        validator: 'min:0',
+        validator: ['min:0', maximum],
         editorParams: { min: 0 },
         cssClass: 'editable',
         width: 90,
@@ -89,7 +104,7 @@ export default (doc) => {
             align: 'right',
             bottomCalc: 'sum',
             editor: 'number',
-            validator: 'min:0',
+            validator: ['min:0', maximum],
             editorParams: { min: 0 },
             cssClass: 'editable',
             width: 100,
@@ -100,7 +115,7 @@ export default (doc) => {
             align: 'right',
             bottomCalc: 'sum',
             editor: 'number',
-            validator: 'min:0',
+            validator: ['min:0', maximum],
             editorParams: { min: 0 },
             cssClass: 'editable',
             width: 110,
@@ -141,6 +156,7 @@ export default (doc) => {
         editor: 'input',
         formatter: 'textarea',
         minWidth: 135,
+        cssClass: 'editable',
       },
     ],
     ajaxResponse(url, params, res) {
@@ -204,19 +220,21 @@ export default (doc) => {
     `,
     cellEdited(cell) {
       // cell - cell component
-      const { data } = cell.cell.row;
+      const row = cell.getRow();
+      const rowData = row.getData();
       console.log(cell);
       console.log(cell.getField());
       if (cell.getField() === 'completed') {
         const cellValue = cell.getValue();
-        const row = cell.getRow();
-        const rowData = row.getData();
         row.update({ percent: cellValue / rowData.total * 100 });
       }
+      row.update({
+        noaction: rowData.total - (rowData.booked + rowData.loading + rowData.completed),
+      });
       fetch('http://localhost:3000/update', {
         // fetch('http://172.29.0.143:3000/update', {
         method: 'POST', // or 'PUT'
-        body: JSON.stringify(data),
+        body: JSON.stringify(rowData),
         headers: new Headers({
           'Content-Type': 'application/json',
         }),
@@ -225,7 +243,7 @@ export default (doc) => {
           if (res.status === 200) {
             Materialize.toast('Data has been updated.', 2000);
             // socket.emit('triggerUpdate', data);
-            uuuu(data);
+            uuuu(rowData);
           } else {
             Materialize.toast('Unable to update table.', 2000);
           }

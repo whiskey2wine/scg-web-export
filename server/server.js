@@ -20,7 +20,8 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 io.on('connection', (socket) => {
-  console.log(`New user connected${socket.request.headers['user-agent']}`);
+  console.log(`New user connected [${socket.request.connection.remoteAddress}]`);
+
   socket.on('triggerUpdate', (data) => {
     console.log(data);
     io.emit('updateChart', data);
@@ -28,7 +29,7 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/public/index.html`);
+  // res.sendFile(`${__dirname}/public/index.html`);
 });
 
 app.get('/getdata', (req, res) => {
@@ -90,6 +91,6 @@ server.listen(port, (err) => {
   if (err) {
     console.log('error', err);
   } else {
-    console.log(`http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
   }
 });

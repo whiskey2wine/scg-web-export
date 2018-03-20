@@ -12,7 +12,7 @@ const config = {
 let query = `
   select * from [Export_Transaction] as t1
   where load_date = '${moment().format('YYYY-MM-DD')}'
-  and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
+  and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo and t2.location = t1.location);
 `;
 // let query = `
 //   select * from [Export_Transaction] as t1
@@ -43,7 +43,7 @@ const data = async () => {
     query = `
       select * from [Export_Transaction] as t1
       where load_date = '${moment().format('YYYY-MM-DD')}'
-      and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo);
+      and t1.timestamp = (select max(t2.timestamp) from [Export_Transaction] as t2 where t2.PINo = t1.PINo and t2.location = t1.location);
     `;
     return result;
   } catch (err) {

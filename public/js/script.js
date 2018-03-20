@@ -89,7 +89,6 @@ const ws = {
 let chartBp;
 let chartWs;
 
-let fetchData;
 const $pmListElement = $('#pm');
 const banpongLabels = ['pm13', 'pm16', 'pm17'];
 const wangsalaLabels = ['pm45', 'pm67', 'pm89', 'ibb'];
@@ -127,7 +126,6 @@ fetch(`${host}/getdata`)
   .then(res => res.json())
   .then((data) => {
     console.log('data', data);
-    fetchData = data;
 
     // push PINo into pmList
     banpongLabels
@@ -168,9 +166,9 @@ let selectedPM;
 $pmListElement.on('change', (e) => {
   selectedPM = e.target.value;
   if (e.target.value === 'selectAll') {
-    $('#tableUpdate').tabulator('setData', `${host}/getdata`);
+    $('#tableUpdate').tabulator('setData', '/getdata');
   } else {
-    $('#tableUpdate').tabulator('setData', `${host}/getdata/${e.target.value}`);
+    $('#tableUpdate').tabulator('setData', `/getdata/${e.target.value}`);
   }
   // console.log($('.active.selected span').html());
 });
