@@ -156,9 +156,9 @@ let selectedPM;
 $pmListElement.on('change', (e) => {
   selectedPM = e.target.value;
   if (e.target.value === 'selectAll') {
-    $('#tableUpdate').tabulator('setData', '/getdata');
+    $('#tableUpdate').tabulator('setData', `${host}/getdata`);
   } else {
-    $('#tableUpdate').tabulator('setData', `/getdata/${e.target.value}`);
+    $('#tableUpdate').tabulator('setData', `${host}/getdata/${e.target.value}`);
   }
   // console.log($('.active.selected span').html());
 });
